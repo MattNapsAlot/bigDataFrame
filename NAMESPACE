@@ -1,0 +1,5 @@
+import(rHDF5)
+exportPattern("^[^\\.]")
+exportClasses("BigDataFrame")
+
+
