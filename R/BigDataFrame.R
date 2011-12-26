@@ -1,6 +1,6 @@
 setMethod(
 	f = "BigDataFrame",
-	signature = signature("character", "missing")
+	signature = signature("character", "missing"),
 	definition = function(hdf5FilePath){
 		new(Class="BigDataFrame", hdfFile=hdf5FilePath)
 	}
@@ -8,9 +8,9 @@ setMethod(
 
 setMethod(
 	f = "BigDataFrame",
-	signature = signature("missing", "missing")
+	signature = signature("missing", "missing"),
 	definition = function(){
-		df <- new(Class="BigDataFrame", hdfFile=tempfile())
+		df <- new(Class="BigDataFrame", hdfFile=tempfile(fileext=".h5"))
 		
 		## write dimensions
 		dim(df) <- c(0,0)
@@ -25,10 +25,16 @@ setMethod(
 	signature = signature("missing", "data.frame"),
 	definition = function(data){
 		df <- BigDataFrame()
+		
+		nrow(df) <- nrow(data)
+                ncol(df) <- ncol(data)
+		
 		colnames(df) <- colnames(data)
 		rownames(df) <- rownames(data)
 		
-		df[1:nrow(data), 1:ncol(data)] <- data 
+	
+		HDF5WriteData(hdfFile(df), "/all.data/dataValues", data)
+		##df[1:nrow(data), 1:ncol(data)] <- data 
 		
 		df
 	}

@@ -11,6 +11,7 @@ setMethod(
         signature = "BigDataFrame",
         definition = function(x, value){
         	colnames(x) <- value
+		x
 	}
 )
 
@@ -18,7 +19,8 @@ setMethod(
         f = "colnames",
         signature = "BigDataFrame",
         definition = function(x){
-                HDF5ReadData(hdfFile(x), "/all.data/colNames")[,1]
+        	if(!("/all.data/colNames" %in% HDF5Summary(hdfFile(x))$datasetsummary)) return(NULL)
+		HDF5ReadData(hdfFile(x), "/all.data/colNames")[,1]
         }
 )
 
@@ -28,7 +30,8 @@ setMethod(
         definition = function(x, value){
 		if(ncol(x) != length(value))
 			stop("dims don't match")
-                HDF5WriteData(hdfFile(x), "/all.dat/colNames")
+                HDF5WriteData(hdfFile(x), "/all.data/colNames", value, options=list(overwrite=TRUE))
+		x
         }
 )
 

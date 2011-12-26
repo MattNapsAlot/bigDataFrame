@@ -1,6 +1,6 @@
 setGeneric(
 	name = "BigDataFrame",
-	def = function(hdf5FilePath){
+	def = function(hdf5FilePath, data){
 		standardGeneric("BigDataFrame")
 	}
 )
@@ -46,5 +46,19 @@ setGeneric(
 
 setGeneric(
 	name = "ncol"
+)
+
+setGeneric(
+        name = "nrow<-",
+	def = function(x, value){
+		standardGeneric("nrow<-")
+	}
+)
+
+setGeneric(
+        name = "ncol<-",
+	def = function(x, value){
+                standardGeneric("ncol<-")
+        }
 )
 
