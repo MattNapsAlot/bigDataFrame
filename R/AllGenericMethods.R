@@ -1,6 +1,6 @@
 setGeneric(
 	name = "BigDataFrame",
-	def = function(x){
+	def = function(hdf5FilePath){
 		standardGeneric("BigDataFrame")
 	}
 )

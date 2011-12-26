@@ -26,6 +26,8 @@ setMethod(
         f = "colnames<-",
         signature = "BigDataFrame",
         definition = function(x, value){
+		if(ncol(x) != length(value))
+			stop("dims don't match")
                 HDF5WriteData(hdfFile(x), "/all.dat/colNames")
         }
 )
