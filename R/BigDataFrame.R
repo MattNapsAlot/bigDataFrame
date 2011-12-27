@@ -18,6 +18,41 @@ setMethod(
 )
 
 setMethod(
+	f = "[<-",
+	signature = "BigDataFrame",
+	definition = function(x, i, j, value){
+		if(missing(i))
+                        i <- 1:nrow(x)
+                if(missing(j))
+                        j <- 1:ncol(x)		
+		
+		if(!all(dim(value) == c(i,j))) stop("replacement did not match dimensions of data to be replaced")
+                if(nrow(x) < i || ncol(x) < j) stop("index out of bounds")
+		
+		## read in the grows
+		iParts <- bigDataFrame:::.findContigs(i)
+		for(ii in 1:length(iParts)){
+			rows <- x[iParts[[ii]],]
+			
+			## modify the values
+			if(is.null(dim(value))){
+				rows[j] <- value
+			}else{
+				rows[, j] <- value[iParts[[ii]],]
+			}
+			
+			if(!is.null(dim(rows)) && all(dim(rows) == dim(x))){
+				## write back the modified rows
+				HDF5WriteData(hdfFile(x), "/all.data/dataValues", rows, options=list(overwrite=TRUE))	
+			}else{
+				HDF5WriteData(hdfFile(x), "/all.data/dataValues", rows, options=list(startindex=(iParts[[ii]][1] - 1), nrows=length(iParts[[ii]]), overwrite=TRUE))
+			}
+		} 
+		x
+	}
+)
+
+setMethod(
 	f = "[",
 	signature = "BigDataFrame",
 	definition = function(x, i, j, ...){
