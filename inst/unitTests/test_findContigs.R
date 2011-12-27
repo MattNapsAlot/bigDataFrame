@@ -33,3 +33,11 @@ unitTestFloatingPoint <-
 	## not implemented
 }
 
+unitTestOneContig <-
+	function()
+{
+	indx <- 1:10
+	parts <- bigDataFrame:::.findContigs(indx)
+	checkEquals(length(parts), 1L)
+	checkTrue(all(parts[[1]] == 1:10))
+}
