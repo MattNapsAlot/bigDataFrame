@@ -32,7 +32,8 @@ setMethod(
 		colnames(df) <- colnames(data)
 		rownames(df) <- rownames(data)
 		
-	
+		colClasses(df) <- as.character(lapply(data,function(x){class(x[1])}))
+			
 		HDF5WriteData(hdfFile(df), "/all.data/dataValues", data)
 		##df[1:nrow(data), 1:ncol(data)] <- data 
 		

@@ -1,4 +1,18 @@
 setGeneric(
+        name = "colClasses<-",
+def = function(x, value){
+		standardGeneric("colClasses<-")
+        }
+)
+
+setGeneric(
+	name = "colClasses",
+	def = function(x){
+		standardGeneric("colClasses")
+	}
+)
+
+setGeneric(
 	name = "BigDataFrame",
 	def = function(hdf5FilePath, data){
 		standardGeneric("BigDataFrame")
