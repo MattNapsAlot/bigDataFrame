@@ -21,16 +21,31 @@ setMethod(
 	f = "[",
 	signature = "BigDataFrame",
 	definition = function(x, i, j, ...){
-		dd <- data.frame(HDF5ReadData(hdfFile(x), "/all.data/dataValues"), stringsAsFactors=F)
 		if(missing(i))
 			i <- 1:nrow(x)
 		if(missing(j))
 			j <- 1:ncol(x)
-		dd <- dd[i,j]
-		names(dd) <- names(x)[i]
-		rownames(dd) <- rownames(x)[j]
-		classes <- colClasses(x)[j]
-		lapply(j, function(i){storage.mode(dd[,i]) <- classes[i]})
+		
+
+		dd <- NULL
+		iParts <- .findContigs(i)
+		for(ii in 1:length(iParts)){
+			tmp <- HDF5ReadData(hdfFile(x), "/all.data/dataValues", options=list(startindex=(iParts[[ii]][1] - 1), nrows=length(iParts[[ii]])))
+			if(is.null(dd)){
+				dd <- tmp[,j]
+			}else{
+				dd <- rbind(dd, tmp)[,j]
+			}
+		}
+		if(length(i) > 1){
+			dd <- data.frame(dd, stringsAsFactors=FALSE)
+			rownames(dd) <- rownames(x)[i]
+			names(dd) <- names(x)[j]
+			classes <- colClasses(x)[j]
+			lapply(1:ncol(dd), function(i){storage.mode(dd[,i]) <- classes[i]})
+		}else{
+			storage.mode(dd) <- colClasses(x)[i]
+		}
 		dd
 	}
 )

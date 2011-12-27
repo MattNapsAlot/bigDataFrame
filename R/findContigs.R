@@ -11,8 +11,10 @@
 	diffs <- indx[-1] - indx[-length(indx)]
 	
 	mk <- diffs != 1L
-	if(all(!mk)) return(indx)	
-
+	if(all(!mk)){ 
+		parts[[1]] <- indx
+		return(parts)	
+	}
 	breaks <- which(mk) + 1L
 
 	for(i in 1:length(breaks)){
