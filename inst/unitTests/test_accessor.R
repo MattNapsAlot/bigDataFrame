@@ -24,7 +24,7 @@ unitTestAllDataNoIndices <-
 	dd <- data.frame(diag(10), stringsAsFactors=FALSE)
         df <- BigDataFrame(data=dd)
 
-        ##checkTrue(all(df[] == dd))
+        checkTrue(all(df[] == dd))
 }
 
 unitTestAllData <-
