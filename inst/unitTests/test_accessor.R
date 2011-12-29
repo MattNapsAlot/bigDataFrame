@@ -124,7 +124,8 @@ unitTestRowColSlice <-
         checkTrue(all(dd[,indx] == df[,indx]))
         checkTrue(all(names(dd[,indx]) == names(df[,indx])))
         checkTrue(all(rownames(dd[,indx]) == rownames(df[,indx])))
-	
+
+	checkTrue(all(dd[1:10, 1:10] == df[1:10, 1:10]))
 }
 
 

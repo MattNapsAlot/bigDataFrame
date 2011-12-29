@@ -43,9 +43,9 @@ setMethod(
 			
 			if(!is.null(dim(rows)) && all(dim(rows) == dim(x))){
 				## write back the modified rows
-				HDF5WriteData(hdfFile(x), "/all.data/dataValues", rows, options=list(overwrite=TRUE))	
+				HDF5WriteData(hdfFile(x), "/all.data/dataValues", as.matrix(rows), options=list(overwrite=TRUE))	
 			}else{
-				HDF5WriteData(hdfFile(x), "/all.data/dataValues", rows, options=list(startindex=(iParts[[ii]][1] - 1), nrows=length(iParts[[ii]]), overwrite=TRUE))
+				HDF5WriteData(hdfFile(x), "/all.data/dataValues", as.matrix(rows), options=list(startindex=(iParts[[ii]][1] - 1), nrows=length(iParts[[ii]]), overwrite=TRUE))
 			}
 		} 
 		x
