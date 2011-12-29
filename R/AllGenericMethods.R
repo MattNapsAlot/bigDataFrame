@@ -27,6 +27,10 @@ setGeneric(
 )
 
 setGeneric(
+	name = "as.data.frame"
+)
+
+setGeneric(
 	name = "names"
 )
 

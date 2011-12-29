@@ -18,6 +18,24 @@ unitTestAccessor <-
 
 }
 
+unitTestAllDataNoIndices <-
+	function()
+{
+	dd <- data.frame(diag(10), stringsAsFactors=FALSE)
+        df <- BigDataFrame(data=dd)
+
+        ##checkTrue(all(df[] == dd))
+}
+
+unitTestAllData <-
+	function()
+{
+	dd <- data.frame(diag(10), stringsAsFactors=FALSE)
+        df <- BigDataFrame(data=dd)
+
+        checkTrue(all(df[1:nrow(df), 1:ncol(df)] == dd))
+}
+
 unitTestRowSlice <-
 	function()
 {

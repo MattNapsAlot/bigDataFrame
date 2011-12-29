@@ -61,7 +61,14 @@ setMethod(
 		if(missing(j))
 			j <- 1:ncol(x)
 		
-
+		if((length(unique(i)) == nrow(x)) && (length(unique(j)) == ncol(x))){
+			dd <- data.frame(HDF5ReadData(hdfFile(x), "/all.data/dataValues"), stringsAsFactors=TRUE)
+			rownames(dd) <- rownames(x)[i]
+                        names(dd) <- names(x)[j]
+                        classes <- colClasses(x)[j]
+                        lapply(1:ncol(dd), function(i){storage.mode(dd[,i]) <- classes[i]})
+			return(dd)
+		}
 		dd <- NULL
 		iParts <- .findContigs(i)
 		for(ii in 1:length(iParts)){
