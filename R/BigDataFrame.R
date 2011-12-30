@@ -78,7 +78,7 @@ setMethod(
 					storage.mode(dd[,ii]) <- classes[ii]
 				}
 			}
-			return(dd)
+			return(dd[i,j])
 		}
 		dd <- NULL
 		iParts <- .findContigs(i)
@@ -99,7 +99,7 @@ setMethod(
 		}else{
 			storage.mode(dd) <- colClasses(x)[i]
 		}
-		dd
+		dd[i,j]
 	}
 )
 
