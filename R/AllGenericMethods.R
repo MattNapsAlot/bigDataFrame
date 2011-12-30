@@ -20,6 +20,10 @@ setGeneric(
 )
 
 setGeneric(
+	name = "levels"
+)
+
+setGeneric(
 	name = 'hdfFile',
 	def = function(x){
 		standardGeneric("hdfFile")

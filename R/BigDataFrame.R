@@ -29,7 +29,7 @@ setMethod(
 		if(!all(dim(value) == c(i,j))) stop("replacement did not match dimensions of data to be replaced")
                 if(nrow(x) < i || ncol(x) < j) stop("index out of bounds")
 		
-		## read in the grows
+		## read in the rows
 		iParts <- bigDataFrame:::.findContigs(i)
 		for(ii in 1:length(iParts)){
 			rows <- x[iParts[[ii]],]
@@ -66,7 +66,18 @@ setMethod(
 			rownames(dd) <- rownames(x)[i]
                         names(dd) <- names(x)[j]
 			classes <- colClasses(x)[j]
-                        lapply(1:ncol(dd), function(i){storage.mode(dd[,i]) <- classes[i]})
+                        for(ii in 1:ncol(dd)){
+				this.class <- classes[ii]
+				if(this.class=="factor"){
+					if(is.null(levels(x))){
+						dd[,ii] <- factor(dd[,ii]) 	
+					}else{
+						dd[,ii] <- factor(dd[,ii], levels=levels(x)[ii])
+					}
+				}else{
+					storage.mode(dd[,ii]) <- classes[ii]
+				}
+			}
 			return(dd)
 		}
 		dd <- NULL
