@@ -4,15 +4,7 @@ setMethod(
 	definition = function(object){
 		cat(sprintf("An object of class %s\n", class(object)))
 		cat("Only the first 5 rows and 10 columns are shown\n")
-
-		col.cnt <- min(10L, ncol(object))
-		row.cnt <- min(5L, nrow(object))
-		dd <- data.frame(HDF5ReadData(hdfFile(object), "/all.data/dataValues")[1:row.cnt, 1:col.cnt], stringsAsFactors=FALSE, row.names=rownames(object)[1:row.cnt])
-		names(dd) <- names(object)[1:col.cnt]
-
-		classes <- colClasses(object)[1:col.cnt]
-		lapply(1:col.cnt, function(i){storage.mode(dd[,i]) <- classes[i]})
-		
+		dd <- object:q[1:min(5, nrow(object)), 1:min(10,ncol(object))]
 		show(dd)
 	}
 )

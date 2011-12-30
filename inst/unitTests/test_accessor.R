@@ -165,3 +165,13 @@ unitTestColClasses <-
 	checkTrue(all(dd[-1]==dd2[-1]))
 	checkTrue(all(abs(dd[1] - dd2[1]) <= .Machine$double.eps))
 }
+
+unitTestSingleCol <-
+	function()
+{
+	dd <- data.frame(aColName = c("one", "two", "one", "three", "one"))
+	x <- BigDataFrame(data=dd)
+	checkTrue(all(dd[,1] == x[,1]))
+}
+
+
