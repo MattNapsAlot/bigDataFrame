@@ -1,6 +1,6 @@
 setGeneric(
         name = "colClasses<-",
-def = function(x, value){
+	def = function(x, value){
 		standardGeneric("colClasses<-")
         }
 )
@@ -28,6 +28,14 @@ setGeneric(
 	def = function(x){
 		standardGeneric("hdfFile")
 	}
+)
+
+setGeneric(
+	name = "tail"
+)
+
+setGeneric(
+	name = "head"
 )
 
 setGeneric(

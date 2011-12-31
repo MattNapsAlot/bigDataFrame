@@ -91,7 +91,7 @@ setMethod(
 		}else{
 			storage.mode(dd) <- colClasses(x)[i]
 		}
-		dd[i,j]
+		dd
 	}
 )
 
