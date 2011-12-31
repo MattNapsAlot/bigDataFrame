@@ -4,7 +4,7 @@ setMethod(
 	definition = function(object){
 		cat(sprintf("An object of class %s\n", class(object)))
 		cat("Only the first 5 rows and 10 columns are shown\n")
-		dd <- object:q[1:min(5, nrow(object)), 1:min(10,ncol(object))]
+		dd <- object[1:min(5, nrow(object)), 1:min(10,ncol(object))]
 		show(dd)
 	}
 )
