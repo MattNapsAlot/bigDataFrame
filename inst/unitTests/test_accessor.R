@@ -174,4 +174,19 @@ unitTestSingleCol <-
 	checkTrue(all(dd[,1] == x[,1]))
 }
 
+unitTestZeroRow <-
+	function()
+{
+	dd <- data.frame(aColName = c("one", "two", "one", "three", "one"))
+        x <- BigDataFrame(data=dd)
+        checkTrue(all(dim(x[0,]) == dim(dd[0,])))
+}
 
+unitTestOneColumnSelectAll <-
+	function()
+{
+	dd <- data.frame(aColName = c("one", "two", "one", "three", "one"))
+        x <- BigDataFrame(data=dd)
+	checkTrue(!is.null(dim(x[])))
+	checkTrue(all(dim(x[]) == dim(dd)))
+}

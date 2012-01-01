@@ -4,7 +4,7 @@
 	indx <- as.numeric(indx)
 	if(any(is.na(indx))) stop("missing values")
 	
-	if(any(indx <= 0)) stop("indices must be positive, non-zero integers")
+	if(any(indx < 0)) stop("indices must be positive integers")
 
 	parts <- list()
 

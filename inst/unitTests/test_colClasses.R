@@ -45,5 +45,20 @@ unitTestDataFrameColClasses <-
 	checkTrue(all(as.character(lapply(dd,function(x){class(x[1])})) == colClasses(df)))
 }
 
+unitTestFactorSingleRowSingleCol <-
+	function()
+{
+	dd <- data.frame(y=c('a'))
+        df <- BigDataFrame(data=dd)
+        checkTrue(all(as.character(lapply(dd,function(x){class(x[1])})) == colClasses(df)))
+}
 
-
+unitTestFactorSingleRowTwoCol <-
+        function()
+{
+        dd <- data.frame(x=1,y=c('a'))
+        df <- BigDataFrame(data=dd)
+        checkTrue(all(as.character(lapply(dd,function(x){class(x[1])})) == colClasses(df)))
+	checkEquals(storage.mode(dd[1,1]), storage.mode(df[1,1]))
+	checkEquals(storage.mode(dd[1,2]), storage.mode(df[1,2]))
+}

@@ -24,7 +24,10 @@ unitTestNegInt <-
 unitTestZeroInt <-
 	function()
 {
-	checkException(bigDataFrame:::.findContigs(c(1:5, 0)))
+	parts <- bigDataFrame:::.findContigs(c(1:5, 0))
+	checkEquals(length(parts), 2)
+	checkTrue(all(parts[[1]] == 1:5))
+	checkEquals(parts[[2]], 0)
 }
 
 unitTestFloatingPoint <-

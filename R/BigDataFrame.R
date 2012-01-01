@@ -52,49 +52,79 @@ setMethod(
 	f = "[",
 	signature = "BigDataFrame",
 	definition = function(x, i, j, ...){
+		####
+		## fill in missing index args
+		####
+		missingJ <- FALSE
 		if(missing(i))
 			i <- 1:nrow(x)
-		if(missing(j))
+		if(missing(j)){
+			missingJ <- TRUE
 			j <- 1:ncol(x)
-		
-		if((length(unique(i)) == nrow(x)) && (length(unique(j)) == ncol(x))){
-			dd <- data.frame(HDF5ReadData(hdfFile(x), "/all.data/dataValues"), stringsAsFactors=FALSE)
-			rownames(dd) <- rownames(x)[i]
-                        names(dd) <- names(x)[j]
-			classes <- colClasses(x)[j]
-                        for(ii in 1:ncol(dd)){
-				this.class <- classes[ii]
-				if(this.class=="factor"){
-					if(is.null(levels(x))){
-						dd[,ii] <- factor(dd[,ii]) 	
-					}else{
-						dd[,ii] <- factor(dd[,ii], levels=levels(x)[ii])
-					}
+		}		
+
+		####
+		## Get the data as a matrix
+		####
+		if(length(i) == 1 && i == 0L){
+			## Accessing the "zeroth" row
+			dd <- matrix(nrow=0, ncol=ncol(x))
+		}else if((length(unique(i)) == nrow(x)) && (length(unique(j)) == ncol(x))){
+			## Accessing the entire data set
+			dd <- HDF5ReadData(hdfFile(x), "/all.data/dataValues")
+		}else{
+			## taking a slice
+			dd <- NULL
+			iParts <- .findContigs(i)
+			for(ii in 1:length(iParts)){
+				tmp <- HDF5ReadData(hdfFile(x), "/all.data/dataValues", options=list(startindex=(iParts[[ii]][1] - 1), nrows=length(iParts[[ii]])))
+				if(is.null(dd)){
+					dd <- tmp[,j]
 				}else{
-					storage.mode(dd[,ii]) <- classes[ii]
+					dd <- rbind(dd, tmp)[,j]
 				}
 			}
-			return(dd[i,j])
 		}
-		dd <- NULL
-		iParts <- .findContigs(i)
-		for(ii in 1:length(iParts)){
-			tmp <- HDF5ReadData(hdfFile(x), "/all.data/dataValues", options=list(startindex=(iParts[[ii]][1] - 1), nrows=length(iParts[[ii]])))
-			if(is.null(dd)){
-				dd <- tmp[,j]
-			}else{
-				dd <- rbind(dd, tmp)[,j]
-			}
-		}
-		if(length(i) > 1){
-			dd <- data.frame(dd, stringsAsFactors=FALSE)
-			rownames(dd) <- rownames(x)[i]
-			names(dd) <- names(x)[j]
-			classes <- colClasses(x)[j]
-			lapply(1:ncol(dd), function(i){storage.mode(dd[,i]) <- classes[i]})
+
+	
+		####
+		## Convert matrix to a data frame
+		####
+		if(length(i) == 1 && i != 0){
+			dd <- data.frame(t(data.frame(dd, stringsAsFactors=FALSE)), stringsAsFactors=FALSE)
 		}else{
-			storage.mode(dd) <- colClasses(x)[i]
+			dd <- data.frame(dd, stringsAsFactors=FALSE)
 		}
+		
+		if(nrow(dd) > 0)
+			rownames(dd) <- rownames(x)[i]
+                if(ncol(dd) > 0)
+			names(dd) <- names(x)[j]
+		
+
+		####
+		## Set the column classes
+		####
+		classes <- colClasses(x)[j]
+		level.vals <- levels(x)[j]
+
+		for(jj in 1:ncol(dd)){
+                	if(classes[jj]=="factor"){
+                        	if(is.null(level.vals[[jj]])){
+                                	dd[,jj] <- factor(dd[,jj])
+                                }else{
+                                	dd[,jj] <- factor(dd[,jj], levels=levels(x)[jj])
+                                }
+                        }else{
+                        	storage.mode(dd[,jj]) <- classes[jj]
+                        }
+		}
+
+		####
+		## return the matrix
+		####
+		if(!missingJ && length(j) == 1)
+			dd <- dd[,1]
 		dd
 	}
 )
