@@ -20,6 +20,10 @@ setGeneric(
 )
 
 setGeneric(
+	name = "is.data.frame"
+)
+
+setGeneric(
 	name = "levels"
 )
 
@@ -29,7 +33,9 @@ setGeneric(
 		standardGeneric("hdfFile")
 	}
 )
-
+setGeneric(
+	name="as.vector"
+)
 setGeneric(
 	name = "tail"
 )
