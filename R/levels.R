@@ -24,7 +24,7 @@ setMethod(
 		if(!is.list(value)) stop("levels must be a list")
 		if(length(value) != length(names(x))) stop("provide a levels array for each colName")
 		nms <- names(x)
-		for(i in 1:length(value))
+		for(i in which(!sapply(value,is.null)))
 			HDF5WriteData(hdfFile(x), sprintf("/all.data/levels/%s", nms[i]), value[[i]], options=(overwrite=TRUE))
 		x
 	}

@@ -23,18 +23,39 @@ setMethod(
                         j <- 1:ncol(x)		
 		
 		if(!all(dim(value) == c(i,j))) stop("replacement did not match dimensions of data to be replaced")
-                if(nrow(x) < i || ncol(x) < j) stop("index out of bounds")
-		
-		## read in the rows
+		if(any(i < 0) || any(j < 0)) stop("negative indicex are not yet supported")	
+		if(any(j > ncol(x))) stop("index out of bounds: column expansion not yet supported")	
+		## write the rows
 		iParts <- bigDataFrame:::.findContigs(i)
 		for(ii in 1:length(iParts)){
-			rows <- x[iParts[[ii]],]
 			
+			## look for assignment rows that already exist
+			mk <- iParts[[ii]] %in% 1:nrow(x)
+			if(any(mk)){	
+				rows <- x[iParts[[ii]][mk],]
+			}else{
+				rows <- x[0,]
+			}
+	
+			## find any gaps in the assignment rows
+			gapIndices <- c()
+			if(min(iParts[[ii]]) > (nrow(x) + 1))
+				gapIndices <- (nrow(x) + 1):min(iParts[[ii]] - 1)
+
+
 			## modify the values
 			if(is.null(dim(value))){
-				rows[j] <- value
+				rows[1:length(iParts[[ii]]),j] <- value
 			}else{
-				rows[, j] <- value[iParts[[ii]],]
+				rows[,j] <- value[iParts[[ii]],]
+			}
+
+			## fill the gaps
+			if(length(gapIndices) > 0){
+				gapFill <- x[0,]
+				gapFill[1:length(gapIndices),] <- NA
+				rows <- rbind(gapFill, rows)
+				iParts[[ii]] <- c(gapIndices, iParts[[ii]])
 			}
 			
 			if(!is.null(dim(rows)) && all(dim(rows) == dim(x))){
@@ -43,7 +64,27 @@ setMethod(
 			}else{
 				HDF5WriteData(hdfFile(x), "/all.data/dataValues", as.matrix(rows), options=list(startindex=(iParts[[ii]][1] - 1), nrows=length(iParts[[ii]]), overwrite=TRUE))
 			}
-		} 
+			
+			if(any(!mk)){
+				## update the number of rows and columns
+				nrow(x) <- max(nrow(x), iParts[[ii]])
+				
+				## update the row names
+				rownames(x)[iParts[[ii]]] <- iParts[[ii]]	
+			}
+		}
+		
+		mk <- j > ncol(x)
+		if(any(mk)){	
+                	## update the number of columns and column names
+			ncol(x) <- max(ncol(x), j)
+			colnames(x)[j[mk]] <- paste("V", j[mk], sep="")
+			
+			## update the column classes
+			for(jj in j[mk]){
+				colClasses(x)[jj] <- storage.mode(value[jj])
+			}
+		}
 		x
 	}
 )
@@ -115,7 +156,7 @@ setMethod(
                         	if(is.null(level.vals[[jj]])){
                                 	dd[,jj] <- factor(dd[,jj])
                                 }else{
-                                	dd[,jj] <- factor(dd[,jj], levels=levels(x)[jj])
+                                	dd[,jj] <- factor(dd[,jj], levels=levels(x)[[jj]])
                                 }
                         }else{
                         	storage.mode(dd[,jj]) <- classes[jj]
@@ -168,8 +209,13 @@ setMethod(
 		colClasses(df) <- as.character(lapply(data,function(x){class(x[1])}))
 			
 		HDF5WriteData(hdfFile(df), "/all.data/dataValues", as.matrix(data))
-		##df[1:nrow(data), 1:ncol(data)] <- data 
-			
+		
+		## set the levels for factors
+		factorLevels <- lapply(data,levels)
+		names(factorLevels) <- NULL
+		
+		levels(df) <- factorLevels
+
 		df
 	}
 )

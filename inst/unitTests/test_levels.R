@@ -35,7 +35,7 @@ unitTestNoLevels <-
 	checkTrue(is.null(levels(x)[[1]]))
 }
 
-unitTestSetFactors <-
+unitTestSetLevels <-
 	function()
 {
 	x <- BigDataFrame(hdf5FilePath=file.path(tempdir(), "setLevels.h5"))
