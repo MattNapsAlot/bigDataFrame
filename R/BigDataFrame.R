@@ -22,7 +22,7 @@ setMethod(
                 if(missing(j))
                         j <- 1:ncol(x)		
 		
-		if(!all(dim(value) == c(i,j))) stop("replacement did not match dimensions of data to be replaced")
+		if(!all(dim(value) == c(length(i),length(j)))) stop("replacement did not match dimensions of data to be replaced")
 		if(any(i < 0) || any(j < 0)) stop("negative indicex are not yet supported")	
 		if(any(j > ncol(x))) stop("index out of bounds: column expansion not yet supported")	
 		## write the rows
@@ -47,7 +47,7 @@ setMethod(
 			if(is.null(dim(value))){
 				rows[1:length(iParts[[ii]]),j] <- value
 			}else{
-				rows[,j] <- value[iParts[[ii]],]
+				rows[1:length(iParts[[ii]]),j] <- value[1:length(iParts[[ii]]),]
 			}
 
 			## fill the gaps
@@ -58,7 +58,7 @@ setMethod(
 				iParts[[ii]] <- c(gapIndices, iParts[[ii]])
 			}
 			
-			if(!is.null(dim(rows)) && all(dim(rows) == dim(x))){
+			if(!is.null(dim(rows)) && all(dim(rows) == dim(x)) && all(i %in% 1:nrow(x))){
 				## write back the modified rows
 				HDF5WriteData(hdfFile(x), "/all.data/dataValues", as.matrix(rows), options=list(overwrite=TRUE))	
 			}else{

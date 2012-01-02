@@ -250,5 +250,35 @@ unitTestOutOfBoundsColFactor <-
 #        checkTrue(all(as.character(lapply(x[],class)) == as.character(lapply(dd[],class))))
 }
 
+unitTestAddMultipleRows <-
+	function()
+{
+	dd <- data.frame(diag(10))
+	x <- BigDataFrame(data=dd)
+	
+	x[11:20,] <- dd
+	checkTrue(all(dim(x) == c(20,10)))
+	checkTrue(all(x[11:20,] == dd))
+
+	x[21:30,] <- dd[1:10,]
+        checkTrue(all(dim(x) == c(30,10)))
+	checkTrue(all(x[21:30,] == dd))
+        
+	x[31:40,] <- dd[1:10,1:10]
+        checkTrue(all(dim(x) == c(40,10)))
+	checkTrue(all(x[31:40,] == dd))
+}
+
+unitTestAddMultipleRowsWithGap <-
+	function()
+{
+	dd <- data.frame(diag(10))
+        x <- BigDataFrame(data=dd)
+
+        x[12:21,] <- dd
+        checkTrue(all(dim(x) == c(21,10)))
+        checkTrue(all(x[12:21,] == dd))
+	checkTrue(all(is.na(x[11,])))
 
 
+}
