@@ -72,6 +72,8 @@ setMethod(
 		}else if((length(unique(i)) == nrow(x)) && (length(unique(j)) == ncol(x))){
 			## Accessing the entire data set
 			dd <- HDF5ReadData(hdfFile(x), "/all.data/dataValues")
+			if(length(i) == 1)
+				dd <- dd[i,j]
 		}else{
 			## taking a slice
 			dd <- NULL

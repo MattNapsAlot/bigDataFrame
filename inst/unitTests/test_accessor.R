@@ -72,6 +72,14 @@ unitTestAllRows <-
         checkTrue(all(rownames(dd[indx,]) == rownames(df[indx,])))
 }
 
+unitTestAllRowsSingle <-
+	function()
+{
+	dd <- data.frame(x=1,y=c('a'))
+	df <- BigDataFrame(data=dd)
+	checkTrue(all(dd[1,] == df[1,]))
+}
+
 unitTestColSlice <-
 	function()
 {
