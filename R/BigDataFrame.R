@@ -81,9 +81,13 @@ setMethod(
 			colnames(x)[j[mk]] <- paste("V", j[mk], sep="")
 			
 			## update the column classes
-			for(jj in j[mk]){
-				colClasses(x)[jj] <- storage.mode(value[jj])
-			}
+			lapply(j[mk], function(jj){
+					colClasses(x)[jj] <<- storage.mode(value[jj])
+					ll <- levels(x)
+					ll[[jj]] <- levels(value[jj])
+					levels(x) <<- ll
+				}
+			)
 		}
 		x
 	}
@@ -151,17 +155,18 @@ setMethod(
 		classes <- colClasses(x)[j]
 		level.vals <- levels(x)[j]
 
-		for(jj in 1:ncol(dd)){
-                	if(classes[jj]=="factor"){
-                        	if(is.null(level.vals[[jj]])){
-                                	dd[,jj] <- factor(dd[,jj])
-                                }else{
-                                	dd[,jj] <- factor(dd[,jj], levels=levels(x)[[jj]])
-                                }
-                        }else{
-                        	storage.mode(dd[,jj]) <- classes[jj]
-                        }
-		}
+		lapply(1:ncol(dd), function(jj){
+				if(classes[jj]=="factor"){
+					if(is.null(level.vals[[jj]])){
+                                        	dd[,jj] <<- factor(dd[,jj])
+                                	}else{
+                                        	dd[,jj] <<- factor(dd[,jj], levels=levels(x)[[jj]])
+                                	}
+                        	}else{
+                                	storage.mode(dd[,jj]) <<- classes[jj]
+                        	}
+			}
+		)
 
 		####
 		## return the matrix
