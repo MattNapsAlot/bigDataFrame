@@ -107,7 +107,7 @@ setMethod(
 			missingJ <- TRUE
 			j <- 1:ncol(x)
 		}		
-
+		
 		####
 		## Get the data as a matrix
 		####
@@ -133,7 +133,6 @@ setMethod(
 			}
 		}
 
-	
 		####
 		## Convert matrix to a data frame
 		####
@@ -143,36 +142,55 @@ setMethod(
 			dd <- data.frame(dd, stringsAsFactors=FALSE)
 		}
 		
+		####
+		## commenting this out since reading the row names is too slow
+		## need an efficient way to slice row and column names. M.Furia 2-Jan-2012
+		####	
+		##if(nrow(dd) > 0){
+		##	rownames(dd) <- rownames(x)[i]
+		##}
+		##)
+		## setting the row names this way until slicing can be implemented
+		## M.Furia 2-Jan-2012
 		if(nrow(dd) > 0)
-			rownames(dd) <- rownames(x)[i]
-                if(ncol(dd) > 0)
+			rownames(dd) <- i
+                ####
+
+		if(ncol(dd) > 0){
 			names(dd) <- names(x)[j]
-		
+		}
 
 		####
 		## Set the column classes
 		####
-		classes <- colClasses(x)[j]
-		level.vals <- levels(x)[j]
+		
 
-		lapply(1:ncol(dd), function(jj){
-				if(classes[jj]=="factor"){
-					if(is.null(level.vals[[jj]])){
-                                        	dd[,jj] <<- factor(dd[,jj])
-                                	}else{
-                                        	dd[,jj] <<- factor(dd[,jj], levels=levels(x)[[jj]])
-                                	}
-                        	}else{
-                                	storage.mode(dd[,jj]) <<- classes[jj]
-                        	}
-			}
-		)
+		#####
+		## Commenting out this section because setting the storage mode
+		## takes too much time. M.Furia 2-Jan-2012
+		#####
+		##classes <- colClasses(x)[j]
+		##level.vals <- levels(x)[j]
+	
+		##lapply(1:ncol(dd), function(jj){
+		##		if(classes[jj]=="factor"){
+		##			if(is.null(level.vals[[jj]])){
+                ##                        	dd[,jj] <<- factor(dd[,jj])
+                ##                	}else{
+                ##                        	dd[,jj] <<- factor(dd[,jj], levels=levels(x)[[jj]])
+                ##                	}
+                ##        	}else{
+                ##                	storage.mode(dd[,jj]) <<- classes[jj]
+                ## 	       	}
+		##	}
+		##)
+		####
 
 		####
 		## return the matrix
 		####
 		if(!missingJ && length(j) == 1)
-			dd <- dd[,1]
+			return(dd[,1])
 		dd
 	}
 )
